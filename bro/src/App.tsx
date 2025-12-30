@@ -1,35 +1,39 @@
 import React from "react";
-import { useEffect, useState } from "react";
-
-type Post = {
-  id: number;
-  title: string;
-  body: string;
-};
+import { format } from "date-fns";
 
 const App = () => {
-  const [posts, setPost] = useState<Post[]>([]);
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts")
-      .then((response) => response.json())
-      .then((data) => {
-        setPost(data);
-      });
-  });
+  const now = new Date();
+  const [location, setLocation] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.log(position.coords.latitude);
+      console.log(position.coords.longitude);
+
+      setLocation(position.coords.latitude);
+    });
+  }, []);
+
   return (
-    <div className="h-auto flex justify-center items-center flex-col gap-20 my-20">
-      <div className="bg-blue-400 p-10 rounded-2xl">
-        <h3 className="text-[26px] font-bold ">Post</h3>
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="border-2 bg-red-400 border-black rounded-2xl p-8 m-8"
-          >
-            <span className="font-bold text-[26px]">{post.title}</span>
-            <p>{post.body}</p>
+    <div className="min-h-screen bg-slate-400 flex justify-center items-center text-[#696969]">
+      <div className="w-[450px] h-[500px] bg-white flex flex-col">
+        <div className=" flex justify-between items-center mx-5 my-10 mr-20 font-semibold text-gray-700">
+          <span> {location}</span>
+          <span>{format(now, "dd-MM-yyyy")}</span>
+        </div>
+        <div className="flex justify-center gap-10">
+          <div className="flex flex-col justify-center items-center">
+            <span className="font-bold text-[132px]">20</span>
+            <span className="font-semibold text-[32px]">Cloudy</span>
           </div>
-        ))}
+          <div className="flex flex-col items-center justify-center">
+            <span>wind</span>
+            <span>humidity</span>
+          </div>
+        </div>
+        <div className="">date</div>
       </div>
+      <div className="w-[350px] h-[500px] bg-slate-300">Right section</div>
     </div>
   );
 };
